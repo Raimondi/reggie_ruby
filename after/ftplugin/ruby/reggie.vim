@@ -1,27 +1,34 @@
-" VimL text-objects {{{1
+" Ruby text-objects {{{1
 " Patterns' dict {{{2
 
 let v = {}
-let v.id = 'viml'
+let v.id = ' ruby'
 let v.map_sufix = 'z'
 let v.map_local = 1
 let v.filetype = 1
 let v.post_processor_arg_type = 'o'
 let v.overwrite_mappings = 1
 let v.skip =
-      \ 'getline(".") =~ "^\\s*sy\\%[ntax]\\s\\+region" ||' .
-      \ 'synIDattr(synID(line("."),col("."),1),"name") =~? ' .
-      \ '"\\mcomment\\|string\\|vim\k\{-}var"'
+      \ "synIDattr(synID(line('.'),col('.'),0),'name') =~ '"            .
+      \ "\\<ruby\\%(String\\|StringDelimiter\\|ASCIICode\\|Escape\\|"   .
+      \ "Interpolation\\|NoInterpolation\\|Comment\\|Documentation\\|"  .
+      \ "ConditionalModifier\\|RepeatModifier\\|OptionalDo\\|"          .
+      \ "Function\\|BlockArgument\\|KeywordAsMethod\\|ClassVariable\\|" .
+      \ "InstanceVariable\\|GlobalVariable\\|Symbol\\)\\>'"
+" List of words that start a block at the beginning of the line
+let s:beg_words =
+      \ '<def>|<module>|<class>|<case>|<if>|<unless>|<begin>|'.
+      \ '<for>|<until>|<while>|<catch>'
+
+" Start of the block matches this
 let v.start =
-      \ '\C\m\%(^\||\)\s*\zs\%(' .
-      \ '\<fu\%[nction]\>\|\<\%(wh\%[ile]\|for\)\>\|\<if\>\|\<try\>\|' .
-      \ '\<aug\%[roup]\s\+\%(END\>\)\@!\S' .
-      \ '\)'
+      \ '\C\v^\s*\zs%('.s:beg_words.')|'.
+      \ '%(%('.s:beg_words.').*)@<!<do>'
+
 let v.middle =
-      \ '\C\m\%(^\||\)\s*\zs\%(\<el\%[seif]\>\|\<cat\%[ch]\>\|\<fina\%[lly]\>\)'
+      \'\C\v^\s*\zs%(<els%(e|if)>|<rescue>|<ensure>|<when>)'
 let v.end =
-      \ '\C\m\%(^\||\)\s*\zs\%(\<endf\%[unction]\>\|\<end\%(w\%[hile]\|fo\%[r]\)\>\|'.
-      \ '\<en\%[dif]\>\|\<endt\%[ry]\>\|\<aug\%[roup]\s\+END\>\)'
+      \  '\C\v^\s*\zs<end>'
 let v.objects = textobj#position_objects#new()
 " v.post_process(to, options) dict abort "{{{3
 " Ditto
@@ -84,3 +91,4 @@ endfunction "v.post_process_inner
 
 " {{{2
 call textobj#reggie#setup(v, 1)
+" vim: set et sw=2 sts=2 tw=78: {{{1
