@@ -2,7 +2,7 @@
 " Patterns' dict {{{2
 
 let v = {}
-let v.id = ' ruby'
+let v.id = 'ruby'
 let v.map_sufix = 'z'
 let v.map_local = 1
 let v.filetype = 1
